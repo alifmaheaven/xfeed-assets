@@ -10,9 +10,19 @@ Agent-managed public repository used as a **durable** host for scheduled-post me
 the Inti cron `minio-daily-cleanup` (`0 0 * * *`) wipes `xfeed` (keeping the avatar)
 and empties `xfeed-video`. A Buffer queue item with a future `dueAt` needs its asset
 URL fetchable **until publish time** (days later), so that host cannot serve scheduled
-posts.
+posts. (MAH-122; study §7 of MAH-66.)
 
-## Contents
+## Public base URLs
+
+Two independent public routes serve the same bytes with `Content-Type: video/mp4`,
+HTTP 200, `Accept-Ranges: bytes` (Range → 206):
+
+| Route | Base URL | Notes |
+|---|---|---|
+| GitHub Pages | `https://alifmaheaven.github.io/xfeed-assets/` | primary |
+| jsDelivr (pinned tag) | `https://cdn.jsdelivr.net/gh/alifmaheaven/xfeed-assets@v2026-09-30/` | immutable CDN mirror |
+
+## Cycle-1 TikTok edits (MAH-122 / MAH-81)
 
 | Path | Bytes | sha256 |
 |---|---|---|
@@ -21,14 +31,21 @@ posts.
 
 Slots: Tue 2026-10-06 04:00 UTC and Sat 2026-10-10 04:00 UTC (MAH-81 pilot window).
 
-## Public base URL
-
-```
-https://raw.githubusercontent.com/alifmaheaven/xfeed-assets/main/assets/
-```
-
 Direct:
-- https://raw.githubusercontent.com/alifmaheaven/xfeed-assets/main/assets/tiktok-native-1-tue-0400.mp4
-- https://raw.githubusercontent.com/alifmaheaven/xfeed-assets/main/assets/tiktok-native-2-sat-0400.mp4
+- https://alifmaheaven.github.io/xfeed-assets/assets/tiktok-native-1-tue-0400.mp4
+- https://alifmaheaven.github.io/xfeed-assets/assets/tiktok-native-2-sat-0400.mp4
 
-No credential value is stored in this repository.
+## MAH-105 week-1 set (35 assets, unblocks MAH-87 / MAH-82)
+
+Prefix: `mah105-w1/` — 28 IG Reels + 7 YT Shorts, each byte-identical to the
+MAH-105 manifest sha256. Per-file hashes: `mah105-w1/MANIFEST.json`.
+
+Example:
+- https://alifmaheaven.github.io/xfeed-assets/mah105-w1/mah77-2026-w41-ig-reels-20261005T10.mp4
+
+## Durability
+
+- GitHub Pages and jsDelivr are third-party-hosted, **not** touched by any Inti cron.
+- The `v2026-09-30` tag pins the jsDelivr mirror; that URL keeps serving these exact
+  bytes even if `main` is later changed.
+- No credential value is stored in this repository.
